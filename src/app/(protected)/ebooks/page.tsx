@@ -5,11 +5,11 @@ export default function EbooksPage() {
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>My eBooks</CardTitle>
+          <CardTitle>Meus eBooks</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            The list of eBooks you've created will appear here. This feature will be implemented soon.
+            A lista de eBooks que você criou aparecerá aqui. Este recurso será implementado em breve.
           </p>
         </CardContent>
       </Card>

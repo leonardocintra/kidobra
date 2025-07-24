@@ -14,7 +14,7 @@ export default function Header() {
         <SideDrawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <Button variant="ghost" size="icon" onClick={() => setDrawerOpen(true)}>
                 <Menu className="h-6 w-6" />
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">Abrir menu</span>
             </Button>
         </SideDrawer>
       </div>

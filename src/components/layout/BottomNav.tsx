@@ -6,9 +6,9 @@ import { Home, Book, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { href: '/home', icon: Home, label: 'Home' },
+  { href: '/home', icon: Home, label: 'Início' },
   { href: '/ebooks', icon: Book, label: 'eBooks' },
-  { href: '/profile', icon: User, label: 'Profile' },
+  { href: '/profile', icon: User, label: 'Perfil' },
 ];
 
 export default function BottomNav() {

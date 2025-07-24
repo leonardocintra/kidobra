@@ -25,7 +25,7 @@ export default function SideDrawer({ open, onOpenChange, children }: SideDrawerP
         </SheetHeader>
         <div className="py-4">
           <p className="text-muted-foreground">
-            Future navigation items will be placed here.
+            Itens de navegação futuros serão colocados aqui.
           </p>
         </div>
       </SheetContent>

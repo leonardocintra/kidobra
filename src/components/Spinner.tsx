@@ -22,7 +22,7 @@ export default function Spinner({ size = 'md', className }: SpinnerProps) {
       role="status"
       aria-live="polite"
     >
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only">Carregando...</span>
     </div>
   );
 }

@@ -14,14 +14,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useRouter } from 'next/navigation';
 
 const updateNameSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters long.' }),
+  name: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
 });
 
 const updatePasswordSchema = z.object({
-    currentPassword: z.string().min(1, { message: 'Current password is required.' }),
-    newPassword: z.string().min(6, { message: 'New password must be at least 6 characters long.' }),
+    currentPassword: z.string().min(1, { message: 'A senha atual é obrigatória.' }),
+    newPassword: z.string().min(6, { message: 'A nova senha deve ter pelo menos 6 caracteres.' }),
 }).refine(data => data.currentPassword !== data.newPassword, {
-    message: "New password must be different from the current one.",
+    message: "A nova senha deve ser diferente da atual.",
     path: ["newPassword"],
 });
 
@@ -50,12 +50,12 @@ export default function ProfilePage() {
     try {
       await logOut();
       router.push('/login');
-      toast({ title: 'Logged out successfully!' });
+      toast({ title: 'Sessão encerrada com sucesso!' });
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Logout Error',
-        description: error instanceof Error ? error.message : 'An unknown error occurred.',
+        title: 'Erro ao sair',
+        description: error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.',
       });
     }
   };
@@ -63,12 +63,12 @@ export default function ProfilePage() {
   const handleUpdateName = async (values: z.infer<typeof updateNameSchema>) => {
     try {
       await updateProfile(values);
-      toast({ title: 'Name updated successfully!' });
+      toast({ title: 'Nome atualizado com sucesso!' });
     } catch (error) {
        toast({
         variant: 'destructive',
-        title: 'Error updating name',
-        description: error instanceof Error ? error.message : 'An unknown error occurred.',
+        title: 'Erro ao atualizar o nome',
+        description: error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.',
       });
     }
   };
@@ -76,13 +76,13 @@ export default function ProfilePage() {
   const handleUpdatePassword = async (values: z.infer<typeof updatePasswordSchema>) => {
     try {
       await updatePassword(values);
-      toast({ title: 'Password updated successfully!' });
+      toast({ title: 'Senha atualizada com sucesso!' });
       passwordForm.reset();
     } catch (error) {
         toast({
             variant: 'destructive',
-            title: 'Error updating password',
-            description: 'Please check your current password and try again.',
+            title: 'Erro ao atualizar a senha',
+            description: 'Por favor, verifique sua senha atual e tente novamente.',
         });
     }
   }
@@ -99,8 +99,8 @@ export default function ProfilePage() {
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
-          <CardDescription>View and edit your personal information.</CardDescription>
+          <CardTitle>Informações do Perfil</CardTitle>
+          <CardDescription>Veja e edite suas informações pessoais.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function ProfilePage() {
             <Input value={user.email || ''} disabled />
           </div>
           <div className="space-y-2">
-            <Label>Authentication Provider</Label>
+            <Label>Provedor de Autenticação</Label>
             <Input value={user.provider} disabled className="capitalize" />
           </div>
         </CardContent>
@@ -118,7 +118,7 @@ export default function ProfilePage() {
         <Form {...nameForm}>
           <form onSubmit={nameForm.handleSubmit(handleUpdateName)}>
             <CardHeader>
-              <CardTitle>Update Name</CardTitle>
+              <CardTitle>Atualizar Nome</CardTitle>
             </CardHeader>
             <CardContent>
               <FormField
@@ -126,9 +126,9 @@ export default function ProfilePage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your name" {...field} />
+                      <Input placeholder="Seu nome" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,7 +138,7 @@ export default function ProfilePage() {
             <CardFooter>
               <Button type="submit" disabled={nameForm.formState.isSubmitting}>
                 {nameForm.formState.isSubmitting && <Spinner size="sm" className="mr-2" />}
-                Save Changes
+                Salvar Alterações
               </Button>
             </CardFooter>
           </form>
@@ -150,7 +150,7 @@ export default function ProfilePage() {
             <Form {...passwordForm}>
                 <form onSubmit={passwordForm.handleSubmit(handleUpdatePassword)}>
                     <CardHeader>
-                    <CardTitle>Update Password</CardTitle>
+                    <CardTitle>Atualizar Senha</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                     <FormField
@@ -158,9 +158,9 @@ export default function ProfilePage() {
                         name="currentPassword"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Current Password</FormLabel>
+                            <FormLabel>Senha Atual</FormLabel>
                             <FormControl>
-                            <Input type="password" placeholder="Your current password" {...field} />
+                            <Input type="password" placeholder="Sua senha atual" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -171,9 +171,9 @@ export default function ProfilePage() {
                         name="newPassword"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>New Password</FormLabel>
+                            <FormLabel>Nova Senha</FormLabel>
                             <FormControl>
-                            <Input type="password" placeholder="Your new password" {...field} />
+                            <Input type="password" placeholder="Sua nova senha" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -183,7 +183,7 @@ export default function ProfilePage() {
                     <CardFooter>
                     <Button type="submit" disabled={passwordForm.formState.isSubmitting}>
                         {passwordForm.formState.isSubmitting && <Spinner size="sm" className="mr-2" />}
-                        Update Password
+                        Atualizar Senha
                     </Button>
                     </CardFooter>
                 </form>
@@ -193,12 +193,12 @@ export default function ProfilePage() {
 
       <Card>
         <CardHeader>
-            <CardTitle>Log Out</CardTitle>
-            <CardDescription>End your session on all devices.</CardDescription>
+            <CardTitle>Sair</CardTitle>
+            <CardDescription>Encerre sua sessão em todos os dispositivos.</CardDescription>
         </CardHeader>
         <CardFooter>
              <Button variant="destructive" onClick={handleLogout}>
-                Log Out
+                Sair
             </Button>
         </CardFooter>
       </Card>
