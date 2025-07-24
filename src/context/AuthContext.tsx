@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
       if (firebaseUser) {
-        const userDocRef = doc(firestore, 'users', firebaseUser.uid);
+        const userDocRef = doc(firestore, 'usuarios', firebaseUser.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           setUser(userDoc.data() as UserProfile);
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       provider: 'password',
     };
 
-    await setDoc(doc(firestore, 'users', userCredential.user.uid), newUserProfile);
+    await setDoc(doc(firestore, 'usuarios', userCredential.user.uid), newUserProfile);
     setUser(newUserProfile);
   };
 
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateProfile = async ({ name }: UpdateProfileData) => {
     if (auth.currentUser) {
       await updateFirebaseProfile(auth.currentUser, { displayName: name });
-      const userDocRef = doc(firestore, 'users', auth.currentUser.uid);
+      const userDocRef = doc(firestore, 'usuarios', auth.currentUser.uid);
       await setDoc(userDocRef, { name }, { merge: true });
       setUser((prevUser) => (prevUser ? { ...prevUser, name } : null));
     } else {
