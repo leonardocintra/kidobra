@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { Book } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -86,8 +87,11 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Kidobra</CardTitle>
-          <CardDescription>Faça login para continuar</CardDescription>
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary">
+            <Book className="h-10 w-10 text-primary-foreground" />
+          </div>
+          <CardTitle className="text-2xl font-bold">Kidobra</CardTitle>
+          <CardDescription>Entre em sua conta para criar eBooks incríveis</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
