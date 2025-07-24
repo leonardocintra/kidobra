@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { href: '/home', icon: Home, label: 'Home' },
   { href: '/ebooks', icon: Book, label: 'eBooks' },
-  { href: '/profile', icon: User, label: 'Perfil' },
+  { href: '/profile', icon: User, label: 'Profile' },
 ];
 
 export default function BottomNav() {

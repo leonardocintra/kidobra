@@ -1,8 +1,8 @@
-# **App Name**: Kidobra Starter
+# **App Name**: Kidobra
 
 ## Core Features:
 
-- Firebase Configuration: Configure Firebase (Auth, Firestore, Storage) with necessary keys and initial setup using environment variables.
+- Firebase Configuration: Configure Firebase (Auth, Firestore, Storage) with necessary keys and initial setup using environment variables, ensuring API key is valid.
 - Email/Password Registration: Implement user registration using email and password.
 - Email/Password Login: Implement user login with email and password.
 - Google Login: Implement login with Google account using signInWithPopup.

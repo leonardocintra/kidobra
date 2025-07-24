@@ -5,11 +5,11 @@ export default function HomePage() {
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>Bem-vindo(a) ao Kidobra!</CardTitle>
+          <CardTitle>Welcome to Kidobra!</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Esta é a página inicial. O conteúdo principal da aplicação será exibido aqui.
+            This is the homepage. The main content of the application will be displayed here.
           </p>
         </CardContent>
       </Card>

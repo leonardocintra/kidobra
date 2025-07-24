@@ -15,9 +15,9 @@ import { useToast } from '@/hooks/use-toast';
 import Spinner from '@/components/Spinner';
 
 const signUpSchema = z.object({
-    name: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
-    email: z.string().email({ message: 'Por favor, insira um email válido.' }),
-    password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres.' }),
+    name: z.string().min(2, { message: 'Name must be at least 2 characters long.' }),
+    email: z.string().email({ message: 'Please enter a valid email.' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters long.' }),
 });
 
 export default function SignUpPage() {
@@ -37,13 +37,13 @@ export default function SignUpPage() {
     const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
         try {
             await signUp(values);
-            toast({ title: 'Cadastro realizado com sucesso!', description: 'Bem-vindo(a) ao Kidobra!' });
+            toast({ title: 'Signed up successfully!', description: 'Welcome to Kidobra!' });
             router.push('/');
         } catch (error) {
             toast({
                 variant: 'destructive',
-                title: 'Erro no cadastro',
-                description: 'Este email já pode estar em uso. Tente outro.',
+                title: 'Sign-up Error',
+                description: 'This email may already be in use. Try another one.',
             });
         }
     };
@@ -52,8 +52,8 @@ export default function SignUpPage() {
         <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Criar Conta</CardTitle>
-                    <CardDescription>Junte-se ao Kidobra</CardDescription>
+                    <CardTitle className="text-2xl">Create Account</CardTitle>
+                    <CardDescription>Join Kidobra</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -63,9 +63,9 @@ export default function SignUpPage() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nome</FormLabel>
+                                        <FormLabel>Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Seu nome" {...field} />
+                                            <Input placeholder="Your name" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -78,7 +78,7 @@ export default function SignUpPage() {
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="seu@email.com" {...field} />
+                                            <Input placeholder="your@email.com" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -89,9 +89,9 @@ export default function SignUpPage() {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Senha</FormLabel>
+                                        <FormLabel>Password</FormLabel>
                                         <FormControl>
-                                            <Input type="password" placeholder="Crie uma senha" {...field} />
+                                            <Input type="password" placeholder="Create a password" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -99,14 +99,14 @@ export default function SignUpPage() {
                             />
                             <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={form.formState.isSubmitting}>
                                 {form.formState.isSubmitting && <Spinner size="sm" className="mr-2" />}
-                                Cadastrar
+                                Sign Up
                             </Button>
                         </form>
                     </Form>
                     <div className="mt-4 text-center text-sm">
-                        Já tem uma conta?{' '}
+                        Already have an account?{' '}
                         <Link href="/login" className="underline text-accent-foreground hover:text-accent">
-                            Faça login
+                            Log in
                         </Link>
                     </div>
                 </CardContent>

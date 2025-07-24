@@ -15,8 +15,8 @@ import { useToast } from '@/hooks/use-toast';
 import Spinner from '@/components/Spinner';
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Por favor, insira um email válido.' }),
-  password: z.string().min(1, { message: 'A senha é obrigatória.' }),
+  email: z.string().email({ message: 'Please enter a valid email.' }),
+  password: z.string().min(1, { message: 'Password is required.' }),
 });
 
 const GoogleIcon = () => (
@@ -57,13 +57,13 @@ export default function LoginPage() {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
       await signIn(values);
-      toast({ title: 'Login bem-sucedido!', description: 'Bem-vindo(a) de volta!' });
+      toast({ title: 'Login successful!', description: 'Welcome back!' });
       router.push('/');
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Erro de login',
-        description: 'Email ou senha inválidos. Por favor, tente novamente.',
+        title: 'Login Error',
+        description: 'Invalid email or password. Please try again.',
       });
     }
   };
@@ -71,13 +71,13 @@ export default function LoginPage() {
   const onGoogleSignIn = async () => {
     try {
         await googleSignIn();
-        toast({ title: 'Login com Google bem-sucedido!' });
+        toast({ title: 'Logged in with Google successfully!' });
         router.push('/');
     } catch (error) {
         toast({
             variant: 'destructive',
-            title: 'Erro de login com Google',
-            description: error instanceof Error ? error.message : 'Não foi possível fazer login com Google.',
+            title: 'Google Login Error',
+            description: error instanceof Error ? error.message : 'Could not log in with Google.',
         });
     }
   }
@@ -87,7 +87,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Kidobra</CardTitle>
-          <CardDescription>Faça login para continuar</CardDescription>
+          <CardDescription>Log in to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -99,7 +99,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="seu@email.com" {...field} />
+                      <Input placeholder="your@email.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -110,9 +110,9 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Senha</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Sua senha" {...field} />
+                      <Input type="password" placeholder="Your password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -120,7 +120,7 @@ export default function LoginPage() {
               />
               <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && <Spinner size="sm" className="mr-2" />}
-                Entrar
+                Log In
               </Button>
             </form>
           </Form>
@@ -129,7 +129,7 @@ export default function LoginPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
            <Button variant="outline" className="w-full" onClick={onGoogleSignIn}>
@@ -137,9 +137,9 @@ export default function LoginPage() {
             <span className="ml-2">Google</span>
           </Button>
           <div className="mt-4 text-center text-sm">
-            Não tem uma conta?{' '}
+            Don't have an account?{' '}
             <Link href="/signup" className="underline text-accent-foreground hover:text-accent">
-              Cadastre-se
+              Sign up
             </Link>
           </div>
         </CardContent>
