@@ -14,6 +14,7 @@ import * as z from 'zod';
 import Spinner from '@/components/Spinner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
+import { Crown, ExternalLink } from 'lucide-react';
 
 const updateNameSchema = z.object({
   name: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
@@ -112,17 +113,27 @@ export default function ProfilePage() {
           <CardDescription>
             {user.isSubscriber 
                 ? 'Você tem acesso a todos os recursos premium.' 
-                : 'Você não é um assinante. Assine agora para ter acesso a todos os recursos.'}
+                : 'Atualize para o plano premium e desbloqueie todo o potencial do Kidobra!'}
           </CardDescription>
         </CardHeader>
         {!user.isSubscriber && (
-            <CardFooter>
-                 <Button asChild className="bg-accent hover:bg-accent/90">
-                    <Link href="https://leonardocintra.com.br" target="_blank">
-                        Assinar Agora
-                    </Link>
-                </Button>
-            </CardFooter>
+             <CardContent>
+                <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-primary/20 bg-primary/5 p-8 text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
+                        <Crown className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold">Torne-se um Assinante</h3>
+                    <p className="text-muted-foreground">
+                        Acesse recursos exclusivos e crie eBooks ainda mais incríveis.
+                    </p>
+                    <Button asChild className="bg-accent hover:bg-accent/90">
+                        <Link href="https://leonardocintra.com.br" target="_blank">
+                            Assinar Agora
+                            <ExternalLink className="ml-2 h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>
+            </CardContent>
         )}
       </Card>
 
