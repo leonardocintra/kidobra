@@ -1,0 +1,99 @@
+[
+    {
+      "id": "cores-e-formas",
+      "nome": "Cores e Formas",
+      "descricao": "Atividades para ajudar as crianças a reconhecerem e nomearem cores e formas, desenvolvendo percepção visual e vocabulário básico.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FCores%20%26%20Formas.jpg?alt=media&token=54467e26-d05c-4755-8b5b-0e2e192b1a60",
+      "ordem": 1,
+      "todasAtividades": false
+    },
+    {
+      "id": "pareamento-e-associacao",
+      "nome": "Pareamento e Associação",
+      "descricao": "Estimule o raciocínio lógico e a atenção das crianças com atividades de associação de imagens, objetos e ideias.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FPareamento%20%26%20Associac%CC%A7a%CC%83o.jpg?alt=media&token=fcbc5b83-f2ac-4fba-941d-8d6e602b6fd8",
+      "ordem": 2,
+      "todasAtividades": false
+    },
+    {
+      "id": "pre-escrita-e-tracado",
+      "nome": "Pré-escrita e Traçado",
+      "descricao": "Atividades que preparam as mãozinhas das crianças para a escrita, com exercícios de coordenação motora e controle do traço.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FPre%CC%81-escrita%20%26%20Trac%CC%A7ado.jpg?alt=media&token=e7bfb155-d246-4095-b16b-8e901b8d0d91",
+      "ordem": 3,
+      "todasAtividades": false
+    },
+    {
+      "id": "tesoura-e-colagem",
+      "nome": "Tesoura e Colagem",
+      "descricao": "Desenvolva a coordenação motora fina com atividades que envolvem recorte e colagem de forma segura e divertida.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FTesoura%20e%20Colagem.jpg?alt=media&token=9bf5dff1-e1df-42d1-90ac-b052b546c017",
+      "ordem": 4,
+      "todasAtividades": false
+    },
+    {
+      "id": "logica-e-raciocinio",
+      "nome": "Lógica e Raciocínio",
+      "descricao": "Atividades que estimulam o pensamento lógico, a resolução de problemas e o desenvolvimento cognitivo infantil.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FLo%CC%81gica%20%26%20Racioci%CC%81nio.jpg?alt=media&token=5a6affaa-2952-47f8-9684-edefb70b9386",
+      "ordem": 5,
+      "todasAtividades": false
+    },
+    {
+      "id": "criatividade-e-expressao",
+      "nome": "Criatividade e Expressão",
+      "descricao": "Estimule a imaginação das crianças com propostas artísticas e atividades livres para se expressarem com alegria.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FCriatividade%20%26%20Expressa%CC%83o.jpg?alt=media&token=662be0eb-f005-4ae6-9e18-2e00d8046a6c",
+      "ordem": 6,
+      "todasAtividades": false
+    },
+    {
+      "id": "letras-e-numeros",
+      "nome": "Letras e Números",
+      "descricao": "Conteúdos iniciais de alfabetização e numeracia para apresentar letras, números e noções básicas de contagem.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FLetras%20%26%20Nu%CC%81meros.jpg?alt=media&token=bf727706-3463-4c76-bc53-9c4bf374d05d",
+      "ordem": 7,
+      "todasAtividades": false
+    },
+    {
+      "id": "arte-e-cultura",
+      "nome": "Arte e Cultura",
+      "descricao": "Explore o mundo da arte, da música e das tradições culturais com propostas educativas e inspiradoras para os pequenos.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FArte%20%26%20Cultura.jpg?alt=media&token=b6f9a4b8-129d-4bee-b63a-b8a1aa2b57de",
+      "ordem": 8,
+      "todasAtividades": false
+    },
+    {
+      "id": "jogos-e-desafios",
+      "nome": "Jogos e Desafios",
+      "descricao": "Atividades lúdicas e interativas que ajudam no aprendizado enquanto as crianças brincam e se divertem.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FJogos%20%26%20Desafios.jpg?alt=media&token=abf87294-4048-4385-a6db-16a5e77f1a14",
+      "ordem": 9,
+      "todasAtividades": false
+    },
+    {
+      "id": "historias-biblicas-para-criancas",
+      "nome": "Histórias Bíblicas para Crianças",
+      "descricao": "Conheça os ensinamentos e valores das Escrituras por meio de histórias ilustradas e adaptadas para os pequenos.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FHisto%CC%81rias%20Bi%CC%81blicas.jpg?alt=media&token=1831a51d-c640-46df-b1c4-185ef5e2580f",
+      "ordem": 10,
+      "todasAtividades": false
+    },
+    {
+      "id": "contos-e-fabulas-infantis",
+      "nome": "Contos e Fábulas Infantis",
+      "descricao": "Desperte o gosto pela leitura com histórias encantadoras que ensinam lições de vida e moral de forma divertida.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FContos%20e%20Fa%CC%81bulas%20Infantis.jpg?alt=media&token=4c94dfc7-af37-4a29-bf6c-22132c7cca60",
+      "ordem": 11,
+      "todasAtividades": false
+    },
+    {
+      "id": "todas-as-atividades",
+      "nome": "Todas as Atividades",
+      "descricao": "Veja todas as atividades disponíveis em um só lugar, perfeitas para explorar livremente com seu filho.",
+      "imagemUrl": "https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/categorias%2FTodas%20Atividades.jpg?alt=media&token=4d38b1db-8220-4036-851d-0bac56ce20c8",
+      "ordem": 12,
+      "todasAtividades": true
+    }
+  ]
+  
