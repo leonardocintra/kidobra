@@ -1,4 +1,4 @@
-# Firebase Studio
+# Kidobra - APP
 
 This is a NextJS starter in Firebase Studio.
 
