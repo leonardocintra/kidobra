@@ -1,10 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -97,6 +99,33 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-8">
+       <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-4">
+            <span>Status da Assinatura</span>
+            {user.isSubscriber ? (
+                <Badge>Assinante Ativo</Badge>
+            ) : (
+                <Badge variant="secondary">Não Assinante</Badge>
+            )}
+          </CardTitle>
+          <CardDescription>
+            {user.isSubscriber 
+                ? 'Você tem acesso a todos os recursos premium.' 
+                : 'Você não é um assinante. Assine agora para ter acesso a todos os recursos.'}
+          </CardDescription>
+        </CardHeader>
+        {!user.isSubscriber && (
+            <CardFooter>
+                 <Button asChild className="bg-accent hover:bg-accent/90">
+                    <Link href="https://leonardocintra.com.br" target="_blank">
+                        Assinar Agora
+                    </Link>
+                </Button>
+            </CardFooter>
+        )}
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Informações do Perfil</CardTitle>

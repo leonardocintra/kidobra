@@ -27,11 +27,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
-      if (firebaseUser) {
+      if (firebaseUser && firebaseUser.email) {
         const userDocRef = doc(firestore, 'usuarios', firebaseUser.uid);
-        const userDoc = await getDoc(userDocRef);
+        const subscriptionDocRef = doc(firestore, 'assinaturas', firebaseUser.email);
+        
+        const [userDoc, subscriptionDoc] = await Promise.all([
+            getDoc(userDocRef),
+            getDoc(subscriptionDocRef)
+        ]);
+        
+        const isSubscriber = subscriptionDoc.exists() && subscriptionDoc.data().ativo === true;
+
         if (userDoc.exists()) {
-          setUser(userDoc.data() as UserProfile);
+          setUser({ ...userDoc.data(), isSubscriber } as UserProfile);
         } else {
           // This case can happen for new Google sign-ins
           const provider = firebaseUser.providerData[0].providerId === 'google.com' ? 'google' : 'password';
@@ -40,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: firebaseUser.email,
             name: firebaseUser.displayName,
             provider,
+            isSubscriber,
           };
           await setDoc(userDocRef, newUserProfile);
           setUser(newUserProfile);
@@ -62,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: userCredential.user.email,
       name,
       provider: 'password',
+      isSubscriber: false,
     };
 
     await setDoc(doc(firestore, 'usuarios', userCredential.user.uid), newUserProfile);
