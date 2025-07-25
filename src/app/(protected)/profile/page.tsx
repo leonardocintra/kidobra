@@ -1,10 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -12,6 +14,7 @@ import * as z from 'zod';
 import Spinner from '@/components/Spinner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
+import { Crown, ExternalLink } from 'lucide-react';
 
 const updateNameSchema = z.object({
   name: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
@@ -97,6 +100,43 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-8">
+       <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-4">
+            <span>Status da Assinatura</span>
+            {user.isSubscriber ? (
+                <Badge>Assinante Ativo</Badge>
+            ) : (
+                <Badge variant="secondary">Não Assinante</Badge>
+            )}
+          </CardTitle>
+          <CardDescription>
+            {user.isSubscriber 
+                ? 'Você tem acesso a todos os recursos premium.' 
+                : 'Atualize para o plano premium e desbloqueie todo o potencial do Kidobra!'}
+          </CardDescription>
+        </CardHeader>
+        {!user.isSubscriber && (
+             <CardContent>
+                <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-primary/20 bg-primary/5 p-8 text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
+                        <Crown className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold">Torne-se um Assinante</h3>
+                    <p className="text-muted-foreground">
+                        Acesse recursos exclusivos e crie eBooks ainda mais incríveis.
+                    </p>
+                    <Button asChild className="bg-accent hover:bg-accent/90">
+                        <Link href="https://leonardocintra.com.br" target="_blank">
+                            Assinar Agora
+                            <ExternalLink className="ml-2 h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>
+            </CardContent>
+        )}
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Informações do Perfil</CardTitle>

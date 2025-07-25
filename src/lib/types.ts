@@ -3,4 +3,5 @@ export interface UserProfile {
   email: string | null;
   name: string | null;
   provider: 'password' | 'google';
+  isSubscriber: boolean;
 }
