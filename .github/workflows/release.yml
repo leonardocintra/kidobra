@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write # Necessário para criar tags/releases
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Incrementar versão (patch)
+        id: version
+        run: |
+          VERSION=$(npm version patch -m "chore(release): %s [skip ci]")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Push da tag gerada
+        run: git push --follow-tags
+
+      - name: Criar release final com changelog
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
