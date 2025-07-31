@@ -5,3 +5,22 @@ export interface UserProfile {
   provider: 'password' | 'google';
   isSubscriber: boolean;
 }
+
+export interface Categoria {
+  id: string;
+  nome: string;
+  descricao: string;
+  imagemUrl: string;
+  ordem: number;
+  todasAtividades: boolean;
+}
+
+export interface Atividade {
+  id: string;
+  ordem: number;
+  data: string;
+  categoria: string;
+  pasta: string;
+  arquivo: string;
+  imagemUrl: string;
+}
