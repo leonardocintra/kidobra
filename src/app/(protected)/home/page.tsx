@@ -4,10 +4,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import categoriasData from '@/data/categorias.json';
+import atividadesData from '@/data/atividades.json';
 import type { Categoria } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function CategoryCard({ categoria }: { categoria: Categoria }) {
+  const atividadesCount = categoria.todasAtividades
+    ? atividadesData.length
+    : atividadesData.filter(a => a.categoria === categoria.id).length;
+
   return (
     <Link href={`/atividades/${categoria.id}`} className="group block">
       <Card className="overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:ring-2 group-hover:ring-primary">
@@ -24,10 +29,11 @@ function CategoryCard({ categoria }: { categoria: Categoria }) {
             />
           </div>
         </CardContent>
-        <CardHeader>
-          <CardTitle className="text-center text-base font-semibold group-hover:text-primary">
+        <CardHeader className="text-center">
+          <CardTitle className="text-base font-semibold group-hover:text-primary">
             {categoria.nome}
           </CardTitle>
+          <p className="text-sm text-muted-foreground">{atividadesCount} atividades</p>
         </CardHeader>
       </Card>
     </Link>
