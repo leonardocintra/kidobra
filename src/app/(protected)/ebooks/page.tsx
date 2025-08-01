@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useEbooks } from '@/hooks/useEbooks';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +22,7 @@ export default function EbooksPage() {
   const { user } = useAuth();
   const { ebooks, loading, createEbook, updateEbook, deleteEbook, cloneEbook, selectEbook } = useEbooks();
   const { toast } = useToast();
+  const router = useRouter();
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [editingEbook, setEditingEbook] = useState<Ebook | null>(null);
@@ -66,7 +68,7 @@ export default function EbooksPage() {
 
   const handleSelect = (ebook: Ebook) => {
     selectEbook(ebook);
-    toast({ title: `eBook "${ebook.nome}" selecionado!` });
+    router.push(`/ebooks/${ebook.id}`);
   }
 
   const NonSubscriberContent = () => (
