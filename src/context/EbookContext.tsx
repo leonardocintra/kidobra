@@ -18,6 +18,8 @@ import { useAuth } from '@/hooks/useAuth';
 import type { Ebook } from '@/lib/types';
 import type { EbookContextType, EbookProviderProps } from './EbookContext.types';
 
+const SELECTED_EBOOK_STORAGE_KEY = 'selectedEbookId';
+
 export const EbookContext = createContext<EbookContextType | undefined>(undefined);
 
 export function EbookProvider({ children }: EbookProviderProps) {
@@ -42,6 +44,23 @@ export function EbookProvider({ children }: EbookProviderProps) {
             } as Ebook)
         );
         setEbooks(userEbooks);
+
+        // After fetching ebooks, check for a stored selected ebook ID
+        try {
+            const storedEbookId = localStorage.getItem(SELECTED_EBOOK_STORAGE_KEY);
+            if (storedEbookId) {
+                const ebookToSelect = userEbooks.find(e => e.id === storedEbookId);
+                if (ebookToSelect) {
+                    setSelectedEbook(ebookToSelect);
+                } else {
+                    // Clear storage if the ebook is not found (e.g., deleted)
+                    localStorage.removeItem(SELECTED_EBOOK_STORAGE_KEY);
+                }
+            }
+        } catch (e) {
+            console.warn("Could not access localStorage. Selected ebook won't persist.", e);
+        }
+
       } catch (error) {
         console.error('Erro ao buscar eBooks:', error);
       } finally {
@@ -49,6 +68,12 @@ export function EbookProvider({ children }: EbookProviderProps) {
       }
     } else {
       setEbooks([]);
+      setSelectedEbook(null);
+      try {
+        localStorage.removeItem(SELECTED_EBOOK_STORAGE_KEY);
+      } catch (e) {
+        // ignore
+      }
       setLoading(false);
     }
   }, [user]);
@@ -71,7 +96,9 @@ export function EbookProvider({ children }: EbookProviderProps) {
       ...newEbook,
       data: Timestamp.fromDate(new Date(newEbook.data)),
     });
-    setEbooks([{ ...newEbook, id: docRef.id }, ...ebooks]);
+    
+    // Manually refetch to ensure correct ordering and data consistency
+    await fetchEbooks();
   };
 
   const updateEbook = async (ebookId: string, nome: string) => {
@@ -90,7 +117,7 @@ export function EbookProvider({ children }: EbookProviderProps) {
     await deleteDoc(ebookDocRef);
     setEbooks(ebooks.filter((e) => e.id !== ebookId));
     if (selectedEbook?.id === ebookId) {
-      setSelectedEbook(null);
+      selectEbook(null);
     }
   };
 
@@ -102,15 +129,26 @@ export function EbookProvider({ children }: EbookProviderProps) {
       atividades: ebook.atividades,
     };
     const ebooksCollection = collection(firestore, `usuarios/${user.uid}/ebooks`);
-    const docRef = await addDoc(ebooksCollection, {
+    await addDoc(ebooksCollection, {
       ...newEbook,
       data: Timestamp.fromDate(new Date(newEbook.data)),
     });
-    setEbooks([{ ...newEbook, id: docRef.id }, ...ebooks]);
+    
+    // Manually refetch to ensure correct ordering and data consistency
+    await fetchEbooks();
   };
   
   const selectEbook = (ebook: Ebook | null) => {
     setSelectedEbook(ebook);
+    try {
+        if (ebook) {
+            localStorage.setItem(SELECTED_EBOOK_STORAGE_KEY, ebook.id);
+        } else {
+            localStorage.removeItem(SELECTED_EBOOK_STORAGE_KEY);
+        }
+    } catch (e) {
+        console.warn("Could not access localStorage to persist selected ebook.", e);
+    }
   };
 
   const value = {
