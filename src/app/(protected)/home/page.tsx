@@ -17,7 +17,7 @@ function CategoryCard({ categoria }: { categoria: Categoria }) {
     <Link href={`/atividades/${categoria.id}`} className="group block">
       <Card className="overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:ring-2 group-hover:ring-primary">
         <CardContent className="p-0">
-          <div className="aspect-video w-full overflow-hidden bg-muted">
+          <div className="w-full overflow-hidden bg-muted">
             <Image
               src={categoria.imagemUrl}
               alt={categoria.nome}
@@ -29,7 +29,7 @@ function CategoryCard({ categoria }: { categoria: Categoria }) {
             />
           </div>
         </CardContent>
-        <CardHeader className="text-center">
+        <CardHeader className="text-center p-3">
           <CardTitle className="text-base font-semibold group-hover:text-primary">
             {categoria.nome}
           </CardTitle>
