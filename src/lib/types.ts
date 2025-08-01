@@ -24,3 +24,10 @@ export interface Atividade {
   arquivo: string;
   imagemUrl: string;
 }
+
+export interface Ebook {
+  id: string;
+  nome: string;
+  data: string;
+  atividades: string[];
+}
