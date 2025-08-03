@@ -6,7 +6,8 @@ import {
   User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   updateProfile as updateFirebaseProfile,
@@ -26,7 +27,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        await getRedirectResult(auth);
+        // O onAuthStateChanged vai lidar com a atualização do usuário.
+      } catch (error) {
+        console.error("Erro ao obter resultado do redirecionamento do Google:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleRedirectResult();
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
+      setLoading(true);
       if (firebaseUser && firebaseUser.email) {
         const userDocRef = doc(firestore, 'usuarios', firebaseUser.uid);
         const subscriptionDocRef = doc(firestore, 'assinaturas', firebaseUser.email);
@@ -41,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (userDoc.exists()) {
           setUser({ ...userDoc.data(), isSubscriber } as UserProfile);
         } else {
-          // This case can happen for new Google sign-ins
+          // Caso para novos logins com Google
           const provider = firebaseUser.providerData[0].providerId === 'google.com' ? 'google' : 'password';
           const newUserProfile: UserProfile = {
             uid: firebaseUser.uid,
@@ -84,8 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const googleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-    // onAuthStateChanged will handle the rest
+    await signInWithRedirect(auth, provider);
   };
 
   const logOut = async () => {

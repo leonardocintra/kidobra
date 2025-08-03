@@ -44,7 +44,7 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, googleSignIn } = useAuth();
+  const { signIn, googleSignIn, loading } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -72,8 +72,6 @@ export default function LoginPage() {
   const onGoogleSignIn = async () => {
     try {
         await googleSignIn();
-        toast({ title: 'Login com Google bem-sucedido!' });
-        router.push('/');
     } catch (error) {
         toast({
             variant: 'destructive',
@@ -136,8 +134,8 @@ export default function LoginPage() {
               <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
             </div>
           </div>
-           <Button variant="outline" className="w-full" onClick={onGoogleSignIn}>
-            <GoogleIcon />
+           <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={loading}>
+            {loading ? <Spinner size="sm" className="mr-2" /> : <GoogleIcon />}
             <span className="ml-2">Google</span>
           </Button>
           <div className="mt-4 text-center text-sm">
