@@ -10,6 +10,7 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
+    // We don't want to redirect until we are sure about the auth state.
     if (!loading) {
       if (user) {
         router.replace('/home');
@@ -19,6 +20,7 @@ export default function Page() {
     }
   }, [user, loading, router]);
 
+  // While loading, show a spinner to prevent the user from seeing a flash of the login page.
   return (
     <div className="flex h-screen w-full items-center justify-center bg-background">
       <Spinner size="lg" />

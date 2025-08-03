@@ -38,7 +38,6 @@ export default function SignUpPage() {
         try {
             await signUp(values);
             toast({ title: 'Cadastro realizado com sucesso!', description: 'Bem-vindo ao Kidobra!' });
-            router.push('/');
         } catch (error) {
             toast({
                 variant: 'destructive',
