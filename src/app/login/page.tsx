@@ -59,7 +59,7 @@ export default function LoginPage() {
     try {
       await signIn(values);
       toast({ title: 'Login bem-sucedido!', description: 'Bem-vindo de volta!' });
-      router.push('/home');
+      router.push('/');
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -73,7 +73,7 @@ export default function LoginPage() {
     try {
         await googleSignIn();
         toast({ title: 'Login com Google bem-sucedido!' });
-        router.push('/home');
+        router.push('/');
     } catch (error) {
         toast({
             variant: 'destructive',
