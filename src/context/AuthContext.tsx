@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   onAuthStateChanged,
   User,
@@ -25,12 +26,18 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const handleRedirectResult = async () => {
       try {
-        await getRedirectResult(auth);
-        // O onAuthStateChanged vai lidar com a atualização do usuário.
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // User has successfully signed in with Google.
+          // The onAuthStateChanged listener below will handle the user state update.
+          // We just need to navigate them away from the login page.
+          router.push('/');
+        }
       } catch (error) {
         console.error("Erro ao obter resultado do redirecionamento do Google:", error);
       } finally {
@@ -75,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const signUp = async ({ name, email, password }: SignUpData) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
