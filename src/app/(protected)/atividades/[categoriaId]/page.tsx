@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 import atividadesData from '@/data/atividades.json';
 import categoriasData from '@/data/categorias.json';
@@ -15,6 +16,7 @@ const ATIVIDADES_POR_PAGINA = 20;
 
 export default function AtividadesPorCategoriaPage() {
   const params = useParams();
+  const router = useRouter();
   const categoriaId = params.categoriaId as string;
 
   const [categoria, setCategoria] = useState<Categoria | null>(null);
@@ -66,6 +68,11 @@ export default function AtividadesPorCategoriaPage() {
 
   return (
     <div className="space-y-8">
+       <Button variant="outline" onClick={() => router.push('/')}>
+        <ArrowLeft className="mr-2 h-4 w-4"/>
+        Voltar para Categorias
+      </Button>
+
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">{categoria.nome}</h1>
         <p className="text-muted-foreground">
