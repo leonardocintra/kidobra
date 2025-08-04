@@ -57,32 +57,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       setUser(null);
     }
-    setLoading(false);
+    // setLoading(false) is now called in the useEffect
   }, []);
 
   useEffect(() => {
-    const processAuth = async () => {
-        try {
-            const result = await getRedirectResult(auth);
-            if (result?.user) {
-                // The onAuthStateChanged listener below will handle the profile creation/update.
-                // We just need to make sure we redirect away from the login page.
-                router.push('/');
-            }
-        } catch (error) {
-            console.error("Error processing redirect result:", error);
-        } finally {
-            // This is crucial. We must ensure the main auth listener is attached
-            // AFTER the redirect result has been processed.
-            const unsubscribe = onAuthStateChanged(auth, handleUser);
-            return () => unsubscribe();
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user) {
+          // If a user is found via redirect, we still let onAuthStateChanged handle the profile creation
+          // to keep a single source of truth. We can, however, trigger the redirect to the homepage.
+          router.push('/');
         }
+      } catch (error) {
+        console.error("Error processing redirect result:", error);
+      }
     };
-
-    const unsubscribePromise = processAuth();
-
+  
+    // This function ensures all auth checks are complete before we stop loading.
+    const initializeAuth = async () => {
+      // First, check if there's a pending redirect result.
+      await checkRedirectResult();
+  
+      // Then, set up the main listener. This listener will fire right away with the current auth state.
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        handleUser(firebaseUser);
+        // Only after the first onAuthStateChanged event fires do we consider auth "loaded".
+        setLoading(false);
+      });
+  
+      // The returned function will be called on cleanup.
+      return unsubscribe;
+    };
+  
+    const unsubscribePromise = initializeAuth();
+  
+    // Cleanup function
     return () => {
-        unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
+      unsubscribePromise.then(unsubscribe => unsubscribe());
     };
   }, [handleUser, router]);
 
