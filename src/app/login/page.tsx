@@ -44,7 +44,7 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, googleSignIn, loading } = useAuth();
+  const { signIn, googleSignIn, loading, user } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -59,7 +59,7 @@ export default function LoginPage() {
     try {
       await signIn(values);
       toast({ title: 'Login bem-sucedido!', description: 'Bem-vindo de volta!' });
-      // The redirection is now handled by the AuthContext after the state is confirmed.
+      router.push('/');
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -72,7 +72,7 @@ export default function LoginPage() {
   const onGoogleSignIn = async () => {
     try {
         await googleSignIn();
-        // The redirection is handled by the AuthContext after Google redirects back
+        // The redirection is handled by the AuthContext now
     } catch (error) {
         toast({
             variant: 'destructive',
@@ -83,7 +83,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary">
@@ -147,6 +147,13 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
+      <div className="mt-4 rounded-md bg-foreground p-4 text-background">
+        <p>
+            <span className="font-bold">Status:</span>{' '}
+            {loading ? 'Verificando...' : user ? 'Conectado' : 'Não conectado'}
+        </p>
+        {user && <p className="text-xs">Email: {user.email}</p>}
+      </div>
     </div>
   );
 }
