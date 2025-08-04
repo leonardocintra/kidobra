@@ -57,40 +57,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       setUser(null);
     }
-    // This is the key: always finish loading after handling the user.
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    // This effect runs only once on mount to handle the initial auth state.
     const processAuth = async () => {
         try {
-            // Check if we are coming back from a Google Sign-in
             const result = await getRedirectResult(auth);
             if (result?.user) {
-                // If so, the onAuthStateChanged listener below will handle the user profile creation/update.
+                // The onAuthStateChanged listener below will handle the profile creation/update.
                 // We just need to make sure we redirect away from the login page.
                 router.push('/');
             }
         } catch (error) {
             console.error("Error processing redirect result:", error);
+        } finally {
+            // This is crucial. We must ensure the main auth listener is attached
+            // AFTER the redirect result has been processed.
+            const unsubscribe = onAuthStateChanged(auth, handleUser);
+            return () => unsubscribe();
         }
     };
 
-    processAuth();
-    
-    // onAuthStateChanged is the single source of truth.
-    // It will fire after getRedirectResult is complete, or on any other auth change.
-    const unsubscribe = onAuthStateChanged(auth, handleUser);
+    const unsubscribePromise = processAuth();
 
-    return () => unsubscribe();
+    return () => {
+        unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
+    };
   }, [handleUser, router]);
 
 
   const signUp = async ({ name, email, password }: SignUpData) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateFirebaseProfile(userCredential.user, { displayName: name });
-    // Don't set user manually, let onAuthStateChanged handle it.
+    
     await setDoc(doc(firestore, 'usuarios', userCredential.user.uid), {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
@@ -102,11 +102,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async ({ email, password }: SignInData) => {
     await signInWithEmailAndPassword(auth, email, password);
-    // Don't set user manually, let onAuthStateChanged handle it.
     router.push('/');
   };
-
-
 
   const googleSignIn = async () => {
     setLoading(true);
@@ -116,7 +113,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logOut = async () => {
     await signOut(auth);
-    // User will be set to null by onAuthStateChanged
     router.push('/login');
   };
 
