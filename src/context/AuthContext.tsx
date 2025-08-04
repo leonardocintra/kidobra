@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   onAuthStateChanged,
@@ -28,90 +28,96 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const handleRedirectResult = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          // User has successfully signed in with Google.
-          // The onAuthStateChanged listener below will handle the user state update.
-          // We just need to navigate them away from the login page.
-          router.push('/');
-        }
-      } catch (error) {
-        console.error("Erro ao obter resultado do redirecionamento do Google:", error);
-      } finally {
-        setLoading(false);
+  const handleUser = useCallback(async (firebaseUser: User | null) => {
+    if (firebaseUser && firebaseUser.email) {
+      const userDocRef = doc(firestore, 'usuarios', firebaseUser.uid);
+      const subscriptionDocRef = doc(firestore, 'assinaturas', firebaseUser.email);
+      
+      const [userDoc, subscriptionDoc] = await Promise.all([
+          getDoc(userDocRef),
+          getDoc(subscriptionDocRef)
+      ]);
+      
+      const isSubscriber = subscriptionDoc.exists() && subscriptionDoc.data().ativo === true;
+
+      if (userDoc.exists()) {
+        setUser({ ...userDoc.data(), isSubscriber } as UserProfile);
+      } else {
+        const provider = firebaseUser.providerData[0]?.providerId === 'google.com' ? 'google' : 'password';
+        const newUserProfile: UserProfile = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          provider,
+          isSubscriber,
+        };
+        await setDoc(userDocRef, newUserProfile);
+        setUser(newUserProfile);
       }
+    } else {
+      setUser(null);
+    }
+    // This is the key: always finish loading after handling the user.
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    // This effect runs only once on mount to handle the initial auth state.
+    const processAuth = async () => {
+        try {
+            // Check if we are coming back from a Google Sign-in
+            const result = await getRedirectResult(auth);
+            if (result?.user) {
+                // If so, the onAuthStateChanged listener below will handle the user profile creation/update.
+                // We just need to make sure we redirect away from the login page.
+                router.push('/');
+            }
+        } catch (error) {
+            console.error("Error processing redirect result:", error);
+        }
     };
 
-    handleRedirectResult();
-
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
-      setLoading(true);
-      if (firebaseUser && firebaseUser.email) {
-        const userDocRef = doc(firestore, 'usuarios', firebaseUser.uid);
-        const subscriptionDocRef = doc(firestore, 'assinaturas', firebaseUser.email);
-        
-        const [userDoc, subscriptionDoc] = await Promise.all([
-            getDoc(userDocRef),
-            getDoc(subscriptionDocRef)
-        ]);
-        
-        const isSubscriber = subscriptionDoc.exists() && subscriptionDoc.data().ativo === true;
-
-        if (userDoc.exists()) {
-          setUser({ ...userDoc.data(), isSubscriber } as UserProfile);
-        } else {
-          // Caso para novos logins com Google
-          const provider = firebaseUser.providerData[0].providerId === 'google.com' ? 'google' : 'password';
-          const newUserProfile: UserProfile = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            name: firebaseUser.displayName,
-            provider,
-            isSubscriber,
-          };
-          await setDoc(userDocRef, newUserProfile);
-          setUser(newUserProfile);
-        }
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+    processAuth();
+    
+    // onAuthStateChanged is the single source of truth.
+    // It will fire after getRedirectResult is complete, or on any other auth change.
+    const unsubscribe = onAuthStateChanged(auth, handleUser);
 
     return () => unsubscribe();
-  }, [router]);
+  }, [handleUser, router]);
+
 
   const signUp = async ({ name, email, password }: SignUpData) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateFirebaseProfile(userCredential.user, { displayName: name });
-
-    const newUserProfile: UserProfile = {
-      uid: userCredential.user.uid,
-      email: userCredential.user.email,
-      name,
-      provider: 'password',
-      isSubscriber: false,
-    };
-
-    await setDoc(doc(firestore, 'usuarios', userCredential.user.uid), newUserProfile);
-    setUser(newUserProfile);
+    // Don't set user manually, let onAuthStateChanged handle it.
+    await setDoc(doc(firestore, 'usuarios', userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        name,
+        provider: 'password',
+    });
+    router.push('/');
   };
 
   const signIn = async ({ email, password }: SignInData) => {
     await signInWithEmailAndPassword(auth, email, password);
+    // Don't set user manually, let onAuthStateChanged handle it.
+    router.push('/');
   };
 
+
+
   const googleSignIn = async () => {
+    setLoading(true);
     const provider = new GoogleAuthProvider();
     await signInWithRedirect(auth, provider);
   };
 
   const logOut = async () => {
     await signOut(auth);
-    setUser(null);
+    // User will be set to null by onAuthStateChanged
+    router.push('/login');
   };
 
   const updateProfile = async ({ name }: UpdateProfileData) => {

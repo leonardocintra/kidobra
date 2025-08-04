@@ -59,7 +59,7 @@ export default function LoginPage() {
     try {
       await signIn(values);
       toast({ title: 'Login bem-sucedido!', description: 'Bem-vindo de volta!' });
-      router.push('/');
+      // The redirection is now handled by the AuthContext after the state is confirmed.
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -72,6 +72,7 @@ export default function LoginPage() {
   const onGoogleSignIn = async () => {
     try {
         await googleSignIn();
+        // The redirection is handled by the AuthContext after Google redirects back
     } catch (error) {
         toast({
             variant: 'destructive',
@@ -120,8 +121,8 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && <Spinner size="sm" className="mr-2" />}
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={form.formState.isSubmitting || loading}>
+                {(form.formState.isSubmitting || loading) && <Spinner size="sm" className="mr-2" />}
                 Entrar
               </Button>
             </form>
@@ -135,7 +136,7 @@ export default function LoginPage() {
             </div>
           </div>
            <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={loading}>
-            {loading ? <Spinner size="sm" className="mr-2" /> : <GoogleIcon />}
+            {loading ? <Spinner size="sm" /> : <GoogleIcon />}
             <span className="ml-2">Google</span>
           </Button>
           <div className="mt-4 text-center text-sm">
