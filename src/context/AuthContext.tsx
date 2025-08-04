@@ -57,36 +57,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       setUser(null);
     }
-    // setLoading(false) is now called in the useEffect
   }, []);
 
   useEffect(() => {
-    const checkRedirectResult = async () => {
+    // This function ensures all auth checks are complete before we stop loading.
+    const initializeAuth = async () => {
       try {
+        // First, check if there's a pending redirect result from Google.
+        // This might return null if there's no redirect, or the result if there is.
         const result = await getRedirectResult(auth);
+        
+        // If the user signed in via redirect, the onAuthStateChanged listener below
+        // will handle the user creation/update. We can optionally redirect here if needed,
+        // but it's safer to let the main listener handle it to avoid race conditions.
         if (result?.user) {
-          // If a user is found via redirect, we still let onAuthStateChanged handle the profile creation
-          // to keep a single source of truth. We can, however, trigger the redirect to the homepage.
           router.push('/');
         }
       } catch (error) {
         console.error("Error processing redirect result:", error);
       }
-    };
   
-    // This function ensures all auth checks are complete before we stop loading.
-    const initializeAuth = async () => {
-      // First, check if there's a pending redirect result.
-      await checkRedirectResult();
-  
-      // Then, set up the main listener. This listener will fire right away with the current auth state.
+      // Set up the main listener. This will fire right away with the current auth state.
       const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
         handleUser(firebaseUser);
         // Only after the first onAuthStateChanged event fires do we consider auth "loaded".
         setLoading(false);
       });
   
-      // The returned function will be called on cleanup.
       return unsubscribe;
     };
   
@@ -94,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
     // Cleanup function
     return () => {
-      unsubscribePromise.then(unsubscribe => unsubscribe());
+      unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
     };
   }, [handleUser, router]);
 
@@ -125,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logOut = async () => {
     await signOut(auth);
+    setUser(null);
     router.push('/login');
   };
 

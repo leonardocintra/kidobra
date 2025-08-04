@@ -59,7 +59,6 @@ export default function LoginPage() {
     try {
       await signIn(values);
       toast({ title: 'Login bem-sucedido!', description: 'Bem-vindo de volta!' });
-      router.push('/');
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -72,7 +71,7 @@ export default function LoginPage() {
   const onGoogleSignIn = async () => {
     try {
         await googleSignIn();
-        // The redirection is handled by the AuthContext now
+        // The redirection is now handled by the AuthContext after the state is confirmed.
     } catch (error) {
         toast({
             variant: 'destructive',
