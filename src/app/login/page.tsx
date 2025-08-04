@@ -59,7 +59,7 @@ export default function LoginPage() {
     try {
       await signIn(values);
       toast({ title: 'Login bem-sucedido!', description: 'Bem-vindo de volta!' });
-      router.push('/');
+      // The redirection is now handled by the AuthContext after the state is confirmed.
     } catch (error) {
       toast({
         variant: 'destructive',
