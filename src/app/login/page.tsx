@@ -71,7 +71,7 @@ export default function LoginPage() {
   const onGoogleSignIn = async () => {
     try {
         await googleSignIn();
-        // The redirection is now handled by the AuthContext after the state is confirmed.
+        toast({ title: 'Login com Google bem-sucedido!' });
     } catch (error) {
         toast({
             variant: 'destructive',
@@ -135,7 +135,7 @@ export default function LoginPage() {
             </div>
           </div>
            <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={loading}>
-            {loading ? <Spinner size="sm" /> : <GoogleIcon />}
+            {loading ? <Spinner size="sm" className="mr-2" /> : <GoogleIcon />}
             <span className="ml-2">Google</span>
           </Button>
           <div className="mt-4 text-center text-sm">

@@ -7,8 +7,7 @@ import {
   User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   GoogleAuthProvider,
   signOut,
   updateProfile as updateFirebaseProfile,
@@ -57,43 +56,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       setUser(null);
     }
+    setLoading(false);
   }, []);
 
   useEffect(() => {
-    // This function ensures all auth checks are complete before we stop loading.
-    const initializeAuth = async () => {
-      try {
-        // First, check if there's a pending redirect result from Google.
-        // This might return null if there's no redirect, or the result if there is.
-        const result = await getRedirectResult(auth);
-        
-        // If the user signed in via redirect, the onAuthStateChanged listener below
-        // will handle the user creation/update. We can optionally redirect here if needed,
-        // but it's safer to let the main listener handle it to avoid race conditions.
-        if (result?.user) {
-          router.push('/');
-        }
-      } catch (error) {
-        console.error("Error processing redirect result:", error);
-      }
-  
-      // Set up the main listener. This will fire right away with the current auth state.
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        handleUser(firebaseUser);
-        // Only after the first onAuthStateChanged event fires do we consider auth "loaded".
-        setLoading(false);
-      });
-  
-      return unsubscribe;
-    };
-  
-    const unsubscribePromise = initializeAuth();
-  
-    // Cleanup function
-    return () => {
-      unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
-    };
-  }, [handleUser, router]);
+    const unsubscribe = onAuthStateChanged(auth, handleUser);
+    return () => unsubscribe();
+  }, [handleUser]);
 
 
   const signUp = async ({ name, email, password }: SignUpData) => {
@@ -116,8 +85,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const googleSignIn = async () => {
     setLoading(true);
-    const provider = new GoogleAuthProvider();
-    await signInWithRedirect(auth, provider);
+    try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        // onAuthStateChanged will handle user creation and state update.
+        // We just need to redirect.
+        router.push('/');
+    } catch (error) {
+        console.error("Erro no login com Google:", error);
+        // Make sure to stop loading even if there's an error
+        setLoading(false);
+        throw error;
+    }
   };
 
   const logOut = async () => {
