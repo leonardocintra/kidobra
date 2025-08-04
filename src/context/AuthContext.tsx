@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   onAuthStateChanged,
@@ -28,17 +28,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    // This flag helps prevent race conditions between getRedirectResult and onAuthStateChanged
-    let processingRedirect = true;
+  const handleUser = useCallback(async (firebaseUser: User | null) => {
+    if (firebaseUser && firebaseUser.email) {
+      const userDocRef = doc(firestore, 'usuarios', firebaseUser.uid);
+      const subscriptionDocRef = doc(firestore, 'assinaturas', firebaseUser.email);
+      
+      const [userDoc, subscriptionDoc] = await Promise.all([
+          getDoc(userDocRef),
+          getDoc(subscriptionDocRef)
+      ]);
+      
+      const isSubscriber = subscriptionDoc.exists() && subscriptionDoc.data().ativo === true;
 
-    // First, check for a redirect result from Google SignIn
+      if (userDoc.exists()) {
+        setUser({ ...userDoc.data(), isSubscriber } as UserProfile);
+      } else {
+        const provider = firebaseUser.providerData[0]?.providerId === 'google.com' ? 'google' : 'password';
+        const newUserProfile: UserProfile = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          provider,
+          isSubscriber,
+        };
+        await setDoc(userDocRef, newUserProfile);
+        setUser(newUserProfile);
+      }
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
     getRedirectResult(auth)
       .then((result) => {
-        if (result) {
-          // If there's a result, a user has just signed in.
-          // onAuthStateChanged will handle the user creation/update.
-          // We just need to make sure we redirect them.
+        if (result?.user) {
+          // User has just signed in via redirect. 
+          // `onAuthStateChanged` will handle the profile creation/update.
+          // We just need to make sure we redirect them away from login.
           router.push('/');
         }
       })
@@ -46,60 +75,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao obter resultado do redirecionamento do Google:", error);
       })
       .finally(() => {
-        processingRedirect = false;
-        // If there was no redirect, onAuthStateChanged might have already run.
-        // We set loading to false here to unblock the UI if no user was found.
-        if (!auth.currentUser) {
-            setLoading(false);
-        }
+        // This is crucial. If there's no redirect result, we must ensure loading is eventually false.
+        // `onAuthStateChanged` will take care of it from here.
+        const unsubscribe = onAuthStateChanged(auth, handleUser);
+        return () => unsubscribe();
       });
+  }, [handleUser, router]);
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
-      // Wait for redirect processing to finish before handling auth state changes
-      if (processingRedirect) {
-        return;
-      }
-      
-      setLoading(true);
-      if (firebaseUser && firebaseUser.email) {
-        const userDocRef = doc(firestore, 'usuarios', firebaseUser.uid);
-        const subscriptionDocRef = doc(firestore, 'assinaturas', firebaseUser.email);
-        
-        const [userDoc, subscriptionDoc] = await Promise.all([
-            getDoc(userDocRef),
-            getDoc(subscriptionDocRef)
-        ]);
-        
-        const isSubscriber = subscriptionDoc.exists() && subscriptionDoc.data().ativo === true;
-
-        if (userDoc.exists()) {
-          setUser({ ...userDoc.data(), isSubscriber } as UserProfile);
-        } else {
-          // New user case (e.g., first-time Google sign-in)
-          const provider = firebaseUser.providerData[0]?.providerId === 'google.com' ? 'google' : 'password';
-          const newUserProfile: UserProfile = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            name: firebaseUser.displayName,
-            provider,
-            isSubscriber,
-          };
-          await setDoc(userDocRef, newUserProfile);
-          setUser(newUserProfile);
-        }
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [router]);
 
   const signUp = async ({ name, email, password }: SignUpData) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateFirebaseProfile(userCredential.user, { displayName: name });
-
     const newUserProfile: UserProfile = {
       uid: userCredential.user.uid,
       email: userCredential.user.email,
@@ -107,7 +93,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       provider: 'password',
       isSubscriber: false,
     };
-
     await setDoc(doc(firestore, 'usuarios', userCredential.user.uid), newUserProfile);
     setUser(newUserProfile);
     router.push('/');
@@ -119,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const googleSignIn = async () => {
-    setLoading(true); // Set loading to true to prevent UI flashes
+    setLoading(true);
     const provider = new GoogleAuthProvider();
     await signInWithRedirect(auth, provider);
   };
