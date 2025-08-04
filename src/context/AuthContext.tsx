@@ -110,10 +110,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     await setDoc(doc(firestore, 'usuarios', userCredential.user.uid), newUserProfile);
     setUser(newUserProfile);
+    router.push('/');
   };
 
   const signIn = async ({ email, password }: SignInData) => {
     await signInWithEmailAndPassword(auth, email, password);
+    router.push('/');
   };
 
   const googleSignIn = async () => {
