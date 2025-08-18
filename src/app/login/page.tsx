@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Book } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import Spinner from '@/components/Spinner';
+import Logo from '@/components/Logo';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Por favor, insira um email válido.' }),
@@ -81,13 +81,16 @@ export default function LoginPage() {
     }
   }
 
+  const getStatusText = () => {
+    if (loading) return "Verificando...";
+    return user ? `Conectado como ${user.email}` : "Não conectado";
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4 space-y-4">
+      <Logo className="mb-2" />
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary">
-            <Book className="h-10 w-10 text-primary-foreground" />
-          </div>
           <CardTitle className="text-2xl font-bold">Kidobra</CardTitle>
           <CardDescription>Entre em sua conta para criar eBooks incríveis</CardDescription>
         </CardHeader>
@@ -131,7 +134,7 @@ export default function LoginPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
+              <span className="bg-card px-2 text-muted-foreground">Ou continue com</span>
             </div>
           </div>
            <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={loading}>
@@ -146,12 +149,8 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
-      <div className="mt-4 rounded-md bg-foreground p-4 text-background">
-        <p>
-            <span className="font-bold">Status:</span>{' '}
-            {loading ? 'Verificando...' : user ? 'Conectado' : 'Não conectado'}
-        </p>
-        {user && <p className="text-xs">Email: {user.email}</p>}
+      <div className="text-center text-sm text-muted-foreground">
+        Status: {getStatusText()}
       </div>
     </div>
   );
