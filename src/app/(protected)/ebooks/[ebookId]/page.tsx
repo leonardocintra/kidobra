@@ -6,7 +6,7 @@ import { useEbooks } from '@/hooks/useEbooks';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Spinner from '@/components/Spinner';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, PlusCircle } from 'lucide-react';
 
 export default function EbookDetailPage() {
   const params = useParams();
@@ -52,10 +52,11 @@ export default function EbookDetailPage() {
             Aqui você poderá ver e gerenciar as atividades do seu eBook.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            A funcionalidade de adicionar e remover atividades será implementada em breve.
-          </p>
+        <CardContent className="space-y-6">
+           <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Adicionar Atividade
+           </Button>
           <p className="mt-4 font-semibold">Atividades atuais: {selectedEbook.atividades.length}</p>
         </CardContent>
       </Card>
