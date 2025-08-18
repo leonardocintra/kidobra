@@ -1,4 +1,4 @@
-import type { Ebook } from '@/lib/types';
+import type { Atividade, Ebook } from '@/lib/types';
 
 export interface EbookContextType {
   ebooks: Ebook[];
@@ -9,6 +9,9 @@ export interface EbookContextType {
   deleteEbook: (ebookId: string) => Promise<void>;
   cloneEbook: (ebook: Ebook, novoNome: string) => Promise<void>;
   selectEbook: (ebook: Ebook | null) => void;
+  addAtividadeToEbook: (atividade: Atividade) => Promise<void>;
+  removeAtividadeFromEbook: (atividadeId: string) => Promise<void>;
+  reorderAtividadesInEbook: (atividades: Atividade[]) => Promise<void>;
 }
 
 export interface EbookProviderProps {

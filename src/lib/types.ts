@@ -29,5 +29,5 @@ export interface Ebook {
   id: string;
   nome: string;
   data: string;
-  atividades: string[];
+  atividades: Atividade[];
 }
