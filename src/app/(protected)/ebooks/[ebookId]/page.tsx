@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Spinner from '@/components/Spinner';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, PlusCircle, BookOpen, FileWarning } from 'lucide-react';
+import { ArrowLeft, PlusCircle, FileWarning } from 'lucide-react';
 import AtividadeEbookCard from '@/components/ebooks/AtividadeEbookCard';
 import type { Atividade } from '@/lib/types';
 
@@ -78,10 +78,6 @@ export default function EbookDetailPage() {
           <ArrowLeft className="mr-2 h-4 w-4"/>
           Voltar para Meus eBooks
         </Button>
-         <Button onClick={() => { /* Lógica de Visualizar/Imprimir */ }}>
-            <BookOpen className="mr-2 h-4 w-4" />
-            Visualizar / Imprimir
-         </Button>
       </div>
       <Card>
         <CardHeader>
