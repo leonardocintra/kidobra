@@ -81,7 +81,7 @@ export default function AtividadesPorCategoriaPage() {
       </div>
 
       {atividadesExibidas.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {atividadesExibidas.map((atividade) => (
             <Card key={atividade.id} className="overflow-hidden">
               <CardContent className="p-0">
