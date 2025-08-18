@@ -88,10 +88,11 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4 space-y-4">
-      <Logo className="mb-2" />
       <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Kidobra</CardTitle>
+        <CardHeader className="text-center space-y-4">
+            <div className="flex justify-center">
+                <Logo width={150} height={150}/>
+            </div>
           <CardDescription>Entre em sua conta para criar eBooks incríveis</CardDescription>
         </CardHeader>
         <CardContent>

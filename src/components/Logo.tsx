@@ -13,7 +13,7 @@ export default function Logo({ className, width = 128, height = 128 }: LogoProps
   return (
     <div className={cn('relative', className)} style={{ width, height }}>
       <Image
-        src="https://storage.googleapis.com/kidobra-starter.firebasestorage.app/o/logo.png?alt=media&token=1d331908-161b-4f6b-95d4-72a39281a8c3"
+        src="https://firebasestorage.googleapis.com/v0/b/kidobra-starter.firebasestorage.app/o/kidobra-logo.jpg?alt=media&token=8f68794e-31ea-4acb-bf87-fab5360534b1"
         alt="Kidobra Logo"
         width={width}
         height={height}
