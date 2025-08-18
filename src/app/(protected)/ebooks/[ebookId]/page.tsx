@@ -53,7 +53,7 @@ export default function EbookDetailPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-           <Button>
+           <Button onClick={() => router.push(`/ebooks/${ebookId}/add`)}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Adicionar Atividade
            </Button>
