@@ -7,8 +7,13 @@ import { Copy, Trash2, Edit, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { useEbooks } from '@/hooks/useEbooks';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface EbookListProps {
   ebooks: Ebook[];
@@ -33,46 +38,69 @@ export default function EbookList({ ebooks, onSelect, onClone, onDelete, onEdit 
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {ebooks.map((ebook) => {
-        const isSelected = selectedEbook?.id === ebook.id;
+    <TooltipProvider>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {ebooks.map((ebook) => {
+            const isSelected = selectedEbook?.id === ebook.id;
 
-        return (
-            <Card 
-                key={ebook.id} 
-                className={cn(
-                    "flex flex-col justify-between p-4 transition-all cursor-pointer hover:shadow-lg", 
-                    isSelected && "ring-2 ring-primary"
-                )}
-                onClick={() => onSelect(ebook)}
-            >
-                <div>
-                <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-semibold truncate">{ebook.nome}</h3>
-                    {isSelected && <Badge variant="secondary" className="flex-shrink-0"><CheckCircle className="mr-1 h-3 w-3" />Ativo</Badge>}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                    Criado em: {format(new Date(ebook.data), 'dd/MM/yyyy')}
-                </p>
-                <p className="text-sm text-muted-foreground">{ebook.atividades.length} atividades</p>
-                </div>
-                <div className="mt-4 flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onEdit(ebook); }}>
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Renomear</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onClone(ebook); }}>
-                        <Copy className="h-4 w-4" />
-                        <span className="sr-only">Clonar</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(ebook); }} className="text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Excluir</span>
-                    </Button>
-                </div>
-          </Card>
-        )
-      })}
-    </div>
+            return (
+                <Card 
+                    key={ebook.id} 
+                    className={cn(
+                        "flex flex-col justify-between p-4 transition-all cursor-pointer hover:shadow-lg", 
+                        isSelected && "ring-2 ring-primary"
+                    )}
+                    onClick={() => onSelect(ebook)}
+                >
+                    <div>
+                    <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-semibold truncate">{ebook.nome}</h3>
+                        {isSelected && <Badge variant="secondary" className="flex-shrink-0"><CheckCircle className="mr-1 h-3 w-3" />Ativo</Badge>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                        Criado em: {format(new Date(ebook.data), 'dd/MM/yyyy')}
+                    </p>
+                    <p className="text-sm text-muted-foreground">{ebook.atividades.length} atividades</p>
+                    </div>
+                    <div className="mt-4 flex items-center justify-end gap-1">
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onEdit(ebook); }}>
+                                    <Edit className="h-4 w-4" />
+                                    <span className="sr-only">Renomear</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Renomear</p>
+                            </TooltipContent>
+                        </Tooltip>
+                         <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onClone(ebook); }}>
+                                    <Copy className="h-4 w-4" />
+                                    <span className="sr-only">Clonar</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Clonar</p>
+                            </TooltipContent>
+                        </Tooltip>
+                         <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(ebook); }} className="text-destructive hover:text-destructive">
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="sr-only">Excluir</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Excluir</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
+            </Card>
+            )
+        })}
+        </div>
+    </TooltipProvider>
   );
 }
