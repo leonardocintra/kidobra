@@ -67,6 +67,23 @@ export default function EbookList({ ebooks, onSelect, onClone, onDelete, onEdit,
                     <div className="mt-4 flex items-center justify-end gap-1">
                         <Tooltip>
                             <TooltipTrigger asChild>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    disabled={isGeneratingPdf || ebook.atividades.length === 0} 
+                                    onClick={(e) => { e.stopPropagation(); onExport(ebook); }}
+                                    className="text-green-600 hover:text-green-700"
+                                >
+                                    <Download className="h-4 w-4" />
+                                    <span className="sr-only">Exportar para PDF</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Exportar para PDF</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
                                 <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onEdit(ebook); }}>
                                     <Edit className="h-4 w-4" />
                                     <span className="sr-only">Renomear</span>
@@ -74,17 +91,6 @@ export default function EbookList({ ebooks, onSelect, onClone, onDelete, onEdit,
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>Renomear</p>
-                            </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={isGeneratingPdf || ebook.atividades.length === 0} onClick={(e) => { e.stopPropagation(); onExport(ebook); }}>
-                                    <Download className="h-4 w-4" />
-                                    <span className="sr-only">Exportar para PDF</span>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Exportar para PDF</p>
                             </TooltipContent>
                         </Tooltip>
                          <Tooltip>
