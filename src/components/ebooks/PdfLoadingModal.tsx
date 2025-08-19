@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import Spinner from '../Spinner';
 
 interface PdfLoadingModalProps {
@@ -15,6 +15,9 @@ export default function PdfLoadingModal({ open }: PdfLoadingModalProps) {
         hideCloseButton={true}
         onInteractOutside={(e) => e.preventDefault()}
       >
+        <DialogHeader className="sr-only">
+          <DialogTitle>Gerando PDF</DialogTitle>
+        </DialogHeader>
         <div className="flex flex-col items-center justify-center gap-4 p-4">
           <Spinner size="lg" />
           <p className="text-lg font-medium text-center">Gerando seu eBook...</p>
