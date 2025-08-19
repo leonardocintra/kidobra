@@ -4,11 +4,13 @@ import { useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEbooks } from '@/hooks/useEbooks';
 import { useToast } from '@/hooks/use-toast';
+import { usePdfExporter } from '@/hooks/usePdfExporter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Spinner from '@/components/Spinner';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, PlusCircle, FileWarning } from 'lucide-react';
+import { ArrowLeft, PlusCircle, FileWarning, Download } from 'lucide-react';
 import AtividadeEbookCard from '@/components/ebooks/AtividadeEbookCard';
+import PdfLoadingModal from '@/components/ebooks/PdfLoadingModal';
 import type { Atividade } from '@/lib/types';
 
 export default function EbookDetailPage() {
@@ -16,6 +18,7 @@ export default function EbookDetailPage() {
   const router = useRouter();
   const ebookId = params.ebookId as string;
   const { ebooks, selectedEbook, selectEbook, loading, removeAtividadeFromEbook, reorderAtividadesInEbook } = useEbooks();
+  const { exportToPdf, isGenerating } = usePdfExporter();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -26,6 +29,18 @@ export default function EbookDetailPage() {
       }
     }
   }, [ebookId, ebooks, selectedEbook, selectEbook]);
+
+  const handleExport = async () => {
+    if (!selectedEbook || selectedEbook.atividades.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'eBook Vazio',
+        description: 'Adicione atividades ao seu eBook antes de exportar.',
+      });
+      return;
+    }
+    await exportToPdf(selectedEbook);
+  };
 
   const handleMove = useCallback(async (index: number, direction: 'up' | 'down') => {
     if (!selectedEbook) return;
@@ -72,51 +87,64 @@ export default function EbookDetailPage() {
   const { atividades } = selectedEbook;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={() => router.push('/ebooks')}>
-          <ArrowLeft className="mr-2 h-4 w-4"/>
-          Voltar para Meus eBooks
-        </Button>
+    <>
+      <PdfLoadingModal open={isGenerating} />
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <Button variant="outline" onClick={() => router.push('/ebooks')}>
+            <ArrowLeft className="mr-2 h-4 w-4"/>
+            Voltar para Meus eBooks
+          </Button>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>{selectedEbook.nome}</CardTitle>
+            <CardDescription>
+              Gerencie as atividades do seu eBook. Atualmente com {atividades.length} {atividades.length === 1 ? 'atividade' : 'atividades'}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => router.push(`/ebooks/${ebookId}/add`)}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Adicionar Atividade
+              </Button>
+               <Button 
+                onClick={handleExport} 
+                disabled={isGenerating || atividades.length === 0}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Exportar para PDF
+              </Button>
+            </div>
+            
+            {atividades.length > 0 ? (
+              <div className="space-y-4">
+                {atividades.map((atividade, index) => (
+                  <AtividadeEbookCard 
+                    key={atividade.id}
+                    atividade={atividade}
+                    onMoveUp={() => handleMove(index, 'up')}
+                    onMoveDown={() => handleMove(index, 'down')}
+                    onDelete={() => handleDelete(atividade.id)}
+                    isFirst={index === 0}
+                    isLast={index === atividades.length - 1}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/50 py-12 text-center">
+                  <FileWarning className="h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-4 text-lg font-semibold">Nenhuma atividade adicionada</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                      Clique em "Adicionar Atividade" para começar a montar seu eBook.
+                  </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>{selectedEbook.nome}</CardTitle>
-          <CardDescription>
-            Gerencie as atividades do seu eBook. Atualmente com {atividades.length} {atividades.length === 1 ? 'atividade' : 'atividades'}.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-           <Button onClick={() => router.push(`/ebooks/${ebookId}/add`)}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Adicionar Atividade
-           </Button>
-          
-          {atividades.length > 0 ? (
-            <div className="space-y-4">
-              {atividades.map((atividade, index) => (
-                <AtividadeEbookCard 
-                  key={atividade.id}
-                  atividade={atividade}
-                  onMoveUp={() => handleMove(index, 'up')}
-                  onMoveDown={() => handleMove(index, 'down')}
-                  onDelete={() => handleDelete(atividade.id)}
-                  isFirst={index === 0}
-                  isLast={index === atividades.length - 1}
-                />
-              ))}
-            </div>
-          ) : (
-             <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/50 py-12 text-center">
-                <FileWarning className="h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-semibold">Nenhuma atividade adicionada</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                    Clique em "Adicionar Atividade" para começar a montar seu eBook.
-                </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    </>
   );
 }
