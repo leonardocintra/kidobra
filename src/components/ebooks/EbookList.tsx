@@ -3,7 +3,7 @@
 import type { Ebook } from '@/lib/types';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
-import { Copy, Trash2, Edit, CheckCircle } from 'lucide-react';
+import { Copy, Trash2, Edit, CheckCircle, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { useEbooks } from '@/hooks/useEbooks';
 import { Badge } from '@/components/ui/badge';
@@ -21,9 +21,11 @@ interface EbookListProps {
   onClone: (ebook: Ebook) => void;
   onDelete: (ebook: Ebook) => void;
   onEdit: (ebook: Ebook) => void;
+  onExport: (ebook: Ebook) => void;
+  isGeneratingPdf: boolean;
 }
 
-export default function EbookList({ ebooks, onSelect, onClone, onDelete, onEdit }: EbookListProps) {
+export default function EbookList({ ebooks, onSelect, onClone, onDelete, onEdit, onExport, isGeneratingPdf }: EbookListProps) {
   const { selectedEbook } = useEbooks();
 
   if (ebooks.length === 0) {
@@ -72,6 +74,17 @@ export default function EbookList({ ebooks, onSelect, onClone, onDelete, onEdit 
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>Renomear</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={isGeneratingPdf || ebook.atividades.length === 0} onClick={(e) => { e.stopPropagation(); onExport(ebook); }}>
+                                    <Download className="h-4 w-4" />
+                                    <span className="sr-only">Exportar para PDF</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Exportar para PDF</p>
                             </TooltipContent>
                         </Tooltip>
                          <Tooltip>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useEbooks } from '@/hooks/useEbooks';
 import { useToast } from '@/hooks/use-toast';
+import { usePdfExporter } from '@/hooks/usePdfExporter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Crown, ExternalLink, PlusCircle } from 'lucide-react';
@@ -15,12 +16,14 @@ import CreateEbookModal from '@/components/ebooks/CreateEbookModal';
 import EditEbookModal from '@/components/ebooks/EditEbookModal';
 import CloneEbookModal from '@/components/ebooks/CloneEbookModal';
 import DeleteEbookDialog from '@/components/ebooks/DeleteEbookDialog';
+import PdfLoadingModal from '@/components/ebooks/PdfLoadingModal';
 import type { Ebook } from '@/lib/types';
 
 
 export default function EbooksPage() {
   const { user } = useAuth();
   const { ebooks, loading, createEbook, updateEbook, deleteEbook, cloneEbook, selectEbook } = useEbooks();
+  const { exportToPdf, isGenerating } = usePdfExporter();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -71,6 +74,19 @@ export default function EbooksPage() {
     router.push(`/ebooks/${ebook.id}`);
   }
 
+  const handleExport = async (ebook: Ebook) => {
+    if (!ebook || ebook.atividades.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'eBook Vazio',
+        description: 'Adicione atividades ao seu eBook antes de exportar.',
+      });
+      return;
+    }
+    await exportToPdf(ebook);
+  };
+
+
   const NonSubscriberContent = () => (
     <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-primary/20 bg-primary/5 p-8 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
@@ -90,63 +106,68 @@ export default function EbooksPage() {
   );
 
   return (
-    <div className="space-y-8">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-                <CardTitle>Meus eBooks</CardTitle>
-                <CardDescription>Crie e gerencie seus cadernos de atividades.</CardDescription>
-            </div>
-          {user?.isSubscriber && (
-            <Button onClick={() => setCreateModalOpen(true)}>
-                <PlusCircle className="mr-2 h-4 w-4"/>
-                Novo eBook
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <Spinner />
-            </div>
-          ) : user?.isSubscriber ? (
-            <EbookList
-                ebooks={ebooks}
-                onSelect={handleSelect}
-                onEdit={(ebook) => setEditingEbook(ebook)}
-                onClone={(ebook) => setCloningEbook(ebook)}
-                onDelete={(ebook) => setDeletingEbook(ebook)}
-            />
-          ) : (
-            <NonSubscriberContent />
-          )}
-        </CardContent>
-      </Card>
-      
-      {/* Modals and Dialogs */}
-      <CreateEbookModal 
-        open={isCreateModalOpen}
-        onOpenChange={setCreateModalOpen}
-        onSubmit={handleCreate}
-      />
-      <EditEbookModal 
-        ebook={editingEbook}
-        open={!!editingEbook}
-        onOpenChange={(open) => !open && setEditingEbook(null)}
-        onSubmit={handleEdit}
-      />
-      <CloneEbookModal
-        ebook={cloningEbook}
-        open={!!cloningEbook}
-        onOpenChange={(open) => !open && setCloningEbook(null)}
-        onSubmit={handleClone}
-      />
-      <DeleteEbookDialog
-        ebook={deletingEbook}
-        open={!!deletingEbook}
-        onOpenChange={(open) => !open && setDeletingEbook(null)}
-        onConfirm={handleDelete}
-      />
-    </div>
+    <>
+      <PdfLoadingModal open={isGenerating} />
+      <div className="space-y-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                  <CardTitle>Meus eBooks</CardTitle>
+                  <CardDescription>Crie e gerencie seus cadernos de atividades.</CardDescription>
+              </div>
+            {user?.isSubscriber && (
+              <Button onClick={() => setCreateModalOpen(true)}>
+                  <PlusCircle className="mr-2 h-4 w-4"/>
+                  Novo eBook
+              </Button>
+            )}
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <Spinner />
+              </div>
+            ) : user?.isSubscriber ? (
+              <EbookList
+                  ebooks={ebooks}
+                  onSelect={handleSelect}
+                  onEdit={(ebook) => setEditingEbook(ebook)}
+                  onClone={(ebook) => setCloningEbook(ebook)}
+                  onDelete={(ebook) => setDeletingEbook(ebook)}
+                  onExport={handleExport}
+                  isGeneratingPdf={isGenerating}
+              />
+            ) : (
+              <NonSubscriberContent />
+            )}
+          </CardContent>
+        </Card>
+        
+        {/* Modals and Dialogs */}
+        <CreateEbookModal 
+          open={isCreateModalOpen}
+          onOpenChange={setCreateModalOpen}
+          onSubmit={handleCreate}
+        />
+        <EditEbookModal 
+          ebook={editingEbook}
+          open={!!editingEbook}
+          onOpenChange={(open) => !open && setEditingEbook(null)}
+          onSubmit={handleEdit}
+        />
+        <CloneEbookModal
+          ebook={cloningEbook}
+          open={!!cloningEbook}
+          onOpenChange={(open) => !open && setCloningEbook(null)}
+          onSubmit={handleClone}
+        />
+        <DeleteEbookDialog
+          ebook={deletingEbook}
+          open={!!deletingEbook}
+          onOpenChange={(open) => !open && setDeletingEbook(null)}
+          onConfirm={handleDelete}
+        />
+      </div>
+    </>
   );
 }
